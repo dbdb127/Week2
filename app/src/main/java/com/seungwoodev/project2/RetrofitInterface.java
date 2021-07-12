@@ -14,8 +14,8 @@ public interface RetrofitInterface {
     @POST("/signup")
     Call<Void> executeSignup (@Body HashMap<String, String> map);
 
-    @GET("/product/")
-    Call<ProductResult> getProduct();
+    @POST("/product")
+    Call<ProductResult> getProduct(@Body HashMap<String, String> map);
 
     @POST("/addCart")
     Call<Void> addCart (@Body HashMap<String, String> map);
@@ -25,4 +25,7 @@ public interface RetrofitInterface {
 
     @POST("/basket")
     Call<ProductResult> getBasket(@Body HashMap<String, String> map);
+
+    @GET("/category")
+    Call<CategoryResult> getCategory();
 }

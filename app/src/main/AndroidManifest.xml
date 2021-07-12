@@ -13,11 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project2"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".SubActivity_Google"/>
-        <activity android:name=".SubActivity_NotSDK"></activity>
-         <activity android:name=".ImageFullActivity"></activity>
-
+        <activity android:name=".ProductActivity"></activity>
+        <activity android:name=".BasketActivity" />
+        <activity android:name=".SubActivity_Google" />
+        <activity android:name=".SubActivity_NotSDK" />
+        <activity android:name=".ImageFullActivity" />
         <activity android:name=".SubActivity_Kakao" />
         <activity android:name=".MainActivity_Tab" />
         <activity android:name=".MainActivity">
@@ -30,7 +30,7 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="9ff5c9e88c732b8cfe66292d7abd536b" />
+            android:value="cc4e7e907a9a9f8897360682603dbf3a" />
     </application>
 
 </manifest>

@@ -110,20 +110,19 @@ public class ImageFullActivity extends AppCompatActivity {
                                     .setMessage("Do you want to see your cart?")
                                     .setTitle("Add to Cart")
                                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //activity main으로 넘어가기
-                                    Intent intent = new Intent(ImageFullActivity.this, MainActivity_Tab.class);
-                                    intent.putExtra("cart", "yes");
-                                    startActivity(intent);
-                                }
-                            })
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //장바구니로 넘어가기
+                                            Intent intent = new Intent(ImageFullActivity.this, BasketActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    })
                                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            });
+                                        }
+                                    });
 
                             builder.create();
                             builder.show();

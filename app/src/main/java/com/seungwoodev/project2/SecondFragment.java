@@ -1,7 +1,5 @@
 package com.seungwoodev.project2;
 
-import android.app.AlertDialog;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +29,7 @@ public class SecondFragment extends Fragment {
     private List<Integer> prices;
     private List<Integer> qty;
     private List<Integer> mImages;
-    private SecondAdapter adapter;
+    private BasketAdapter adapter;
 
     public SecondFragment() {
         // Required empty public constructor
@@ -101,7 +99,7 @@ public class SecondFragment extends Fragment {
 //                        Log.d("kyung", names.get(i));
                     }
 
-                    adapter = new SecondAdapter(getActivity().getApplicationContext(), names, prices, qty, mImages);
+                    adapter = new BasketAdapter(getActivity().getApplicationContext(), names, prices, qty, mImages);
 
                     GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1, GridLayoutManager.VERTICAL, false);
 
