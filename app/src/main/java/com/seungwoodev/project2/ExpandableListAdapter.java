@@ -129,8 +129,8 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
 
             case CHILD:
-                TextView itemTextView = (TextView) holder.itemView;
-                itemTextView.setText(data.get(position).text);
+                ListChildrenViewHolder listchildController = (ListChildrenViewHolder) holder;
+                listchildController.categorySub.setText(data.get(position).getText());
                 break;
         }
     }

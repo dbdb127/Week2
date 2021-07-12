@@ -26,6 +26,9 @@ public interface RetrofitInterface {
     @POST("/basket")
     Call<ProductResult> getBasket(@Body HashMap<String, String> map);
 
-    @GET("/category")
-    Call<CategoryResult> getCategory();
+    @GET("/category_main")
+    Call<CategoryResult> getMainCategory();
+
+    @POST("/category_sub")
+    Call<CategoryResult> getSubCategory(@Body HashMap<String, String> map);
 }

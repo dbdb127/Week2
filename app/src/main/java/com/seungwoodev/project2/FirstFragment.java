@@ -19,10 +19,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -73,8 +75,7 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        data = new ArrayList<>();
-        adapter = new ExpandableListAdapter(data);
+        data = new ArrayList<Item>();
 
         //get titles, prices, qty from database
         retrofit = new Retrofit.Builder()
@@ -83,14 +84,14 @@ public class FirstFragment extends Fragment {
                 .build();
 
         retrofitInterface = retrofit.create(RetrofitInterface.class);
-        Call<CategoryResult> call = retrofitInterface.getCategory();
+        Call<CategoryResult> call = retrofitInterface.getMainCategory();
 
         call.enqueue(new Callback<CategoryResult>(){
             @Override
             public void onResponse(Call<CategoryResult> call, retrofit2.Response<CategoryResult> response) {
                 CategoryResult result = response.body();
                 if(result.getCode()==200){
-                    ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
+                    ArrayList<String> tmp;
                     tmp = result.getName();
 
 //                    for(int i=0; i<tmp.size();i++){
@@ -98,21 +99,91 @@ public class FirstFragment extends Fragment {
 //                        for(int j=1;j<tmp.get(i).size();j++){
 //                            data.add(new Item(1, tmp.get(i).get(j)));
 //                        }
+
+                    Log.d("kyung", tmp.toString());
 //                    }
                     for(int i=0;i<tmp.size();i++){
-                        Item main = new Item(0, tmp.get(i).get(0));
-                        for(int j=1;j<tmp.get(i).size();j++){
-                            main.invisibleChildren.add(new Item(1, tmp.get(i).get(j)));
-                        }
+                        Item main = new Item(0, tmp.get(i));
                         data.add(main);
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put("category_main", tmp.get(i));
+//                        Log.d("kyung", tmp.get(i));
+                        Call<CategoryResult> callSub = retrofitInterface.getSubCategory(map);
+
+                        callSub.enqueue(new Callback<CategoryResult>() {
+                            @Override
+                            public void onResponse(Call<CategoryResult> call, Response<CategoryResult> response) {
+                                CategoryResult res = response.body();
+                                Log.d("kyung code", res.getCode().toString()+map.get("category_main"));
+
+                                if(res.getCode()==200){
+                                    ArrayList<String> temp;
+                                    temp = res.getName();
+                                    Log.d("kyung", temp.toString());
+
+                                    Item addItem = data.get(0);
+                                    for(int a=0;a<tmp.size();a++){
+                                        if(data.get(a).text.equals(map.get("category_main"))){
+                                            addItem = data.get(a);
+                                            addItem.invisibleChildren = new ArrayList<Item>();
+                                            break;
+                                        }
+                                    }
+                                    Log.d("kyung", addItem.text);
+                                    for(int j=0;j<temp.size();j++){
+                                        addItem.invisibleChildren.add(new Item(1, temp.get(j)));
+                                    }
+                                    Log.d("addItem", addItem.invisibleChildren.toString());
+
+                                }else if(res.getCode()==404){
+//                                    Toast.makeText(getActivity().getApplicationContext(),"으앙앙", Toast.LENGTH_SHORT).show();
+                                }
+
+                                adapter = new ExpandableListAdapter(data);
+                                adapter.setOnItemClickListener(new ExpandableListAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(int position, Item item) {
+                                        Intent intent = new Intent(getActivity().getApplicationContext(), ProductActivity.class);
+                                        intent.putExtra("subCategory", item.getText());
+                                        startActivity(intent);
+                                    }
+                                });
+
+                                LinearLayoutManager mLineaerLayoutManager = new LinearLayoutManager(getActivity());
+                                mRecyclerView.setLayoutManager(mLineaerLayoutManager);
+                                mRecyclerView.setAdapter(adapter);
+                                mRecyclerView.setHasFixedSize(true);
+                                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(), mLineaerLayoutManager.getOrientation());
+                                mRecyclerView.addItemDecoration(dividerItemDecoration);
+                            }
+                            @Override
+                            public void onFailure(Call<CategoryResult> call, Throwable t) {
+                                Log.d("kyung fail", map.get("category_main"));
+                            }
+                        });
                     }
 
-                    LinearLayoutManager mLineaerLayoutManager = new LinearLayoutManager(getActivity());
-                    mRecyclerView.setLayoutManager(mLineaerLayoutManager);
-                    mRecyclerView.setAdapter(adapter);
-                    mRecyclerView.setHasFixedSize(true);
-                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(), mLineaerLayoutManager.getOrientation());
-                    mRecyclerView.addItemDecoration(dividerItemDecoration);
+                    Log.d("kyung", String.valueOf(data.size()));
+//                    for(int a=0;a<data.size();a++){
+//                        Log.d("kyung", data);
+//                    }
+//                    adapter = new ExpandableListAdapter(data);
+//
+//                    adapter.setOnItemClickListener(new ExpandableListAdapter.OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick(int position, Item item) {
+//                            Intent intent = new Intent(getActivity().getApplicationContext(), ProductActivity.class);
+//                            intent.putExtra("subCategory", item.getText());
+//                            startActivity(intent);
+//                        }
+//                    });
+//
+//                    LinearLayoutManager mLineaerLayoutManager = new LinearLayoutManager(getActivity());
+//                    mRecyclerView.setLayoutManager(mLineaerLayoutManager);
+//                    mRecyclerView.setAdapter(adapter);
+//                    mRecyclerView.setHasFixedSize(true);
+//                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(), mLineaerLayoutManager.getOrientation());
+//                    mRecyclerView.addItemDecoration(dividerItemDecoration);
 
                 }else if(result.getCode()==404){
                     Toast.makeText(getActivity().getApplicationContext(),"No Products", Toast.LENGTH_SHORT).show();
@@ -126,13 +197,6 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        adapter.setOnItemClickListener(new ExpandableListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, Item item) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), ProductActivity.class);
-                intent.putExtra("subCategory", item.getText());
-                startActivity(intent);
-            }
-        });
+
     }
 }
